@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+
 import './App.css';
 import person from './Person/Person';
 import Person from './Person/Person';
@@ -29,13 +30,18 @@ class App extends Component {
     });
   }
 
-  nameChangeHandler = (event) => {
+  nameChangeHandler = (event, id) => {
+
+    const pIndex = this.state.persons.findIndex( p => p.id === id );
+    const person = { ...this.state.persons[pIndex] };
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[pIndex] = person;
+
     this.setState({
-      persons:[
-        {name:event.target.value,age:26},
-        {name:'Soni',age:30},
-        {name:'Kunal',age:27.5}
-      ]
+      persons:persons
     });
   }
 
@@ -52,17 +58,10 @@ class App extends Component {
 
     render() {
 
-      const style= {
-        backgroundColor:'white',
-        font:'inherit',
-        padding:'8px',
-        border:'1px solid blue',
-        cursor:'pointer'
-      };
-
       let persons = null;
 
       if (this.state.showPersons) {
+
         persons = (
           <div>
             { this.state.persons.map( (person, index) => {
@@ -71,36 +70,38 @@ class App extends Component {
                 name={person.name}
                 age={person.age}
                 click={()=>this.deletePersonHandler(index)}
+                changed={ (event)=> this.nameChangeHandler(event, person.id) }
               />
             } ) }
           </div>
         );
       }
 
+      const classes = [];
+
+      if (this.state.persons.length <=2) {
+        classes.push('red');
+      }
+
+      if (this.state.persons.length <=1) {
+        classes.push('bold');
+      }
+
+      
+
       return (
-        <div className="App">
-          <h1>Hi</h1>
-          <button
-            style={style} 
-            onClick={ () => this.togglePersonHandler()} > Swtich Name</button>
-            {persons}
-        </div>
+          <div className="App">
+            <h1>Hi</h1>
+            <p className={classes.join(' ')} >This is a React list</p>
+            <button
+              className="button"
+              alt={this.state.showPersons}
+              onClick={ () => this.togglePersonHandler()} > Swtich Name</button>
+              {persons}
+          </div>
       );
     }
-    
-
-    // return React.createElement('div',{className:'App'},React.createElement('h1',null,'Does this work now?'));
-  
 }
 
 export default App;
-
-// state={
-//   persons:[
-//     {name:'Akshay',age:26},
-//     {name:'Soni',age:30},
-//     {name:'Kunal',age:27}
-//   ]
-// };
-
 
